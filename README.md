@@ -4,11 +4,10 @@
 
 # Pi-hole with DNS over HTTPS (DoH) using Docker
 
-<div style="display: flex; align-items: center; justify-content: center;">
-    <img src="https://pi-hole.github.io/graphics/Vortex/Vortex_Vertical_wordmark_lightmode.png" alt="Image" height="200">
-    <p style="font-size: 100px;margin-right: 20px;">+</p>
-    <p style="font-size: 40px;">DNS over <br/>HTTPS (DoH) <br/> via <strong>Cloudflared</strong></p>
-</div>
+<p align="center">
+    <a href="https://pi-hole.net"><img src="https://pi-hole.github.io/graphics/Vortex/Vortex_with_text.png" height="200" alt="Pi-hole"></a><br/>
+    +<br/>DNS over <br/>HTTPS (DoH) <br/> via <strong>Cloudflared</strong>
+</p>
 
 <!-- markdownlint-enable MD033 -->
 
