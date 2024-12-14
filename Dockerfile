@@ -2,9 +2,9 @@ FROM pihole/pihole
 
 EXPOSE 53/tcp 53/udp 67/udp 80/tcp
 
-ENV DNS1 127.0.0.1#5053
-ENV DOH_DNS1 https://1.1.1.1/dns-query
-ENV DOH_DNS2 https://1.0.0.1/dns-query
+ENV DNS1=127.0.0.1#5053
+ENV DOH_DNS1=https://1.1.1.1/dns-query
+ENV DOH_DNS2=https://1.0.0.1/dns-query
 
 RUN apt-get update \
     && apt-get -y install wget \

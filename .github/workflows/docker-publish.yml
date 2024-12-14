@@ -70,11 +70,8 @@ jobs:
           push: true
           build-args: |
             PIHOLE_VERSION=${{ steps.pihole-version.outputs.version }}
-          cache-from: type=registry,ref=bariscimen/pihole-dns-over-https:buildcache
-          cache-to: type=registry,ref=bariscimen/pihole-dns-over-https:buildcache,mode=max
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           tags: |
             bariscimen/pihole-dns-over-https:latest
             bariscimen/pihole-dns-over-https:${{ steps.pihole-version.outputs.version }}
-          labels: |
-            org.opencontainers.image.created=${{ github.event.repository.updated_at }}
-            org.opencontainers.image.version=${{ steps.pihole-version.outputs.version }}
