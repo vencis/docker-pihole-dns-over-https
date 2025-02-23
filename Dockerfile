@@ -1,7 +1,3 @@
-LABEL maintainer="baris@bariscimen.com" \
-      version="1.0" \
-      description="Pi-hole with DNS over HTTPS (DoH)"
-
 FROM pihole/pihole
 
 EXPOSE 53/tcp 53/udp 67/udp 80/tcp
