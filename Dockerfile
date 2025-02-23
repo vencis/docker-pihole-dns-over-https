@@ -28,74 +28,11 @@ RUN apk add --no-cache wget bash \
     && chmod +x /usr/local/bin/cloudflared \
     && apk del wget
 
-# Create cloudflared startup script
-COPY <<-'EOF' /usr/local/bin/start-cloudflared.sh
-#!/bin/bash
-set -e
+# Copy scripts
+COPY scripts/start-cloudflared.sh /usr/local/bin/
+COPY scripts/custom-entrypoint.sh /usr/local/bin/
 
-# Test DNS resolution before starting
-if ! cloudflared proxy-dns --port 5053 --upstream $DOH_DNS1 --upstream $DOH_DNS2 --test-upstream; then
-    echo "Error: Failed to resolve DNS using cloudflared"
-    exit 1
-fi
-
-exec cloudflared proxy-dns --port 5053 --upstream $DOH_DNS1 --upstream $DOH_DNS2 --metrics localhost:49312
-EOF
-
-# Create custom entrypoint script
-COPY <<-'EOF' /usr/local/bin/custom-entrypoint.sh
-#!/bin/bash
-set -e
-
-# Handle shutdown
-cleanup() {
-    echo "Shutting down services..."
-    kill -TERM $CLOUDFLARED_PID 2>/dev/null
-    kill -TERM $PIHOLE_PID 2>/dev/null
-    wait $CLOUDFLARED_PID 2>/dev/null
-    wait $PIHOLE_PID 2>/dev/null
-    exit 0
-}
-trap cleanup SIGTERM SIGINT
-
-# Start services
-echo "Starting cloudflared..."
-/usr/local/bin/start-cloudflared.sh &
-CLOUDFLARED_PID=$!
-
-echo "Starting Pi-hole..."
-/usr/bin/start.sh &
-PIHOLE_PID=$!
-
-# Wait for services to be ready
-sleep 2
-
-# Verify cloudflared is working
-if ! dig @127.0.0.1 -p 5053 cloudflare.com > /dev/null; then
-    echo "Error: cloudflared DNS resolution test failed"
-    cleanup
-    exit 1
-fi
-
-echo "Services started successfully"
-
-# Monitor processes
-while true; do
-    if ! kill -0 $CLOUDFLARED_PID 2>/dev/null; then
-        echo "Error: cloudflared exited unexpectedly"
-        cleanup
-        exit 1
-    fi
-    if ! kill -0 $PIHOLE_PID 2>/dev/null; then
-        echo "Error: Pi-hole exited unexpectedly"
-        cleanup
-        exit 1
-    fi
-    sleep 1
-done
-EOF
-
-# Make scripts executable
+# Make scripts executable and install dig
 RUN chmod +x /usr/local/bin/start-cloudflared.sh \
     && chmod +x /usr/local/bin/custom-entrypoint.sh \
     && apk add --no-cache bind-tools
